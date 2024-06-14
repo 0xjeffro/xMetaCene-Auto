@@ -64,7 +64,7 @@ def get_time_to_7am():
 
 
 def get_headers(user):
-    time.sleep(random.randint(3, 5))
+    time.sleep(random.randint(5, 15))
     headers = HEADERS
     headers['Cookie'] = 'PHPSESSID=' + user[1]
     return headers
