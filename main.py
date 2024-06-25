@@ -336,22 +336,27 @@ def op(user):
         recharge(user, spar)
         spar = 0
 
+    lv0 = info['data']['pet']['lv']
     # 宠物升级逻辑，优先升级pet
     pet_level_up = False
     up_need_spar = info['data']['pet']['upNeedSpar']
-    while spar >= up_need_spar:
+    if lv0 < 500:
+        while spar >= up_need_spar:
+            pet_level_up = True
+            rsp = json.loads(levelUp(user))
+            spar -= up_need_spar
+            up_need_spar = rsp['data']['pet']['upNeedSpar']
+    else:
         pet_level_up = True
-        rsp = json.loads(levelUp(user))
-        spar -= up_need_spar
-        up_need_spar = rsp['data']['pet']['upNeedSpar']
 
     # 角色1解锁逻辑
     if info['data']['roleMan']['lv'] == 0:  # 未解锁
         if spar >= info['data']['roleMan']['unlock_cost']['count']:
             spar -= info['data']['roleMan']['unlock_cost']['count']
             lockRole1(user)
+
     # 角色1升级逻辑
-    if info['data']['roleMan']['lv'] > 0 and pet_level_up:
+    if 0 < info['data']['roleMan']['lv'] < 500 and pet_level_up:
         up_need_spar = info['data']['roleMan']['upNeedSpar']
         while spar >= up_need_spar:
             rsp = json.loads(levelUp1(user))
@@ -365,7 +370,8 @@ def op(user):
         energy -= 1
 
     # 角色2升级逻辑
-    if info['data']['roleWoman']['lv'] > 0 and pet_level_up:
+
+    if 0 < info['data']['roleWoman']['lv'] < 500 and pet_level_up:
         up_need_spar = info['data']['roleWoman']['upNeedSpar']
         while spar >= up_need_spar:
             rsp = json.loads(levelUp2(user))
@@ -418,5 +424,3 @@ if __name__ == '__main__':
             except Exception as e:
                 print('Error @' + user[0] + ': ', e)
         print('Loop End: ', loop_cnt, '-------------------------', 'SUM_TMNK: ', SUM_TMNK, 'WAIT_TMNK: ', WAIT_TMNK, 'ALL_SPEED: ', ALL_SPEED)
-
-
